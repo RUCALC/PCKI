@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PCKI4</title>
+    <script src="https://unpkg.com/jspsych@7.3.4"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-button-response@1.2.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-slider-response@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-likert@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-multi-select@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-multi-choice@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey@1.0.1"></script>
+<link rel="stylesheet" href="https://unpkg.com/@jspsych/plugin-survey@1.0.1/css/survey.css">
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.2.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-slider-response@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.3"></script>
+    <link href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body></body>
+  <script>
+
+    /* initialize jsPsych */
+    var jsPsych = initJsPsych();
+
+    /* create timeline */
+    var timeline = [];
+
+    var savefilename = "data_";
+
+    /* preload images */
+    var preload = {
+      type: jsPsychPreload,
+      images: ['img/control1.png',
+      'img/control2.png',
+      'img/control3.png',
+      'img/control4.png',
+      'img/control5.png',
+      'img/control6.png',
+      'img/control7.png',
+      'img/control8.png',
+      'img/control9.png',
+      'img/control10.png',
+      'img/consenttext.png',
+      'img/consent1.png',
+      'img/consent2.png',
+      'img/p1.png',
+      'img/p2.png',
+      'img/p3.png',
+      'img/p4.png',
+      'img/p5.png',
+      'img/p6.png',
+      'img/welcome1.png',
+      'img/welcome2.png',
+      'img/welcome3.png',
+      'img/part1.png',
+      'img/part2.png',
+      'img/part3.png',
+      'img/genderinstructions1.png',
+      'img/genderinstructions2.png',
+      'img/researchbee.png',
+      'img/postbee.png',
+      'img/thankyou.png']
+    };
+    timeline.push(preload);
+
+    /* define welcome message trial */
+    var welcome1 = {
+      type: jsPsychImageButtonResponse,
+      stimulus: 'img/welcome1.png',
+      stimulus_height: 700,
+      stimulus_width: 700,
+      choices: ['Continue'],
+      data: {survey_part: "Condition 4"}
+    };
+    timeline.push(welcome1);
+
+    var welcome2 = {
+      type: jsPsychImageButtonResponse,
+      stimulus: 'img/welcome2.png',
+      stimulus_height: 700,
+      stimulus_width: 700,
+      choices: ['Continue']
+    }
+    timeline.push(welcome2);
+
+    var welcome3 = {
+      type: jsPsychImageButtonResponse,
+      stimulus: 'img/welcome3.png',
+      stimulus_height: 700,
+      stimulus_width: 700,
+      choices: ['Continue']
+    }
+    timeline.push(welcome3);
+
+    /*insert ID question here*/
+    var SubjectID = {
+      type: jsPsychSurveyText,
+      questions: [
+        {prompt: 'Please enter your prolific ID:',
+        required: true,
+        }
+      ],
+      on_finish: function(){
+        savefilename = "data_"+ jsPsych.data.get().last(1).values()[0].response['Q0']
+
+        //savefilename = "data_"+ jsPsych.data.get().select('response').values[1]['Q0'];
+        // var subject_id = jsPsych.data.get()
+        // jsPsych.data.addProperties({ID: subject_id});
+        // savefilename = "data_"+subject_id;
+      },
+      data: {survey_part: "prolific_ID"}
+    };
+    timeline.push(SubjectID);
+
+  /*consent text*/
+    var consent_text = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: `
+      <p>This is a research project conducted at Rutgers University.</p>
+      <p>You will receive compensation upon completion of the study, provided you put forth full effort and read all instructions and questions carefully.</p>
+      <p>The data we collect during the experiment are not linked to potentially identifying information. These data will solely be used for research purposes.</p>
+      <p></p>
+      <p>You are free to stop the experiment by closing your browser window at any time. If you have any questions, please contact us at child.research@psych.rutgers.edu.</p>
+      <div style='width: 300px;'>
+      `,
+      choices: ['Continue'],
+      data: {survey_part: 'consent_text'},
+  };
+    timeline.push(consent_text);
+
+    /*consent form here*/ /* decline button?? */
+    var consent_form = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus:"<p>You can download a copy of our consent form here. Please scroll down to provide consent for the study.</p>"+
+      '<img src="img/consent1.png" width="800"><br>'+
+      '<img src="img/consent2.png" width="800"><br>'+
+      '<p>By selecting the "consent" button below, I acknowledge that I am 18 or older, have read this consent form, and I agree to take part in the project conducted by the research team led by Dr. Jenny Wang. I agree to take part in the research, with the knowledge that I am free to withdraw my participation in the research without penalty.</p>',
+      choices: ['Consent.'],
+      data: {survey_part: 'consent_response'},
+    }
+    timeline.push(consent_form);
+
+    var intro = {
+      type: jsPsychImageButtonResponse,
+      stimulus: 'img/part1.png',
+      prompt: `</p>You will now begin <strong>Part 1</strong> and answer some questions.</p>
+      <p> Press the 'Continue' button when you are ready.</p>`,
+      stimulus_width: 450,
+      stimulus_height: 450,
+      choices: ['Continue'],
+      data: {survey_part: 'intro'},
+    }
+    timeline.push(intro);
+
+    /* check question */
+    var check_question = {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus: 'Do you have children? (Press the <strong>Y key</strong> for Yes and the <strong>N key</strong> for No)',
+    choices: ['y','n'],
+    data: {survey_part: 'check_response'},
+}
+
+var child_dem = {
+    timeline: [
+    {
+      type: jsPsychSurveyMultiChoice,
+      questions: [
+        {prompt: "How many children do you have?",
+        options: ['1', '2', '3', '4', '5+'],
+          required: true
+        }
+      ],
+      data: {survey_part: 'child_number'},
+    },
+    {
+      type: jsPsychSurveyMultiChoice,
+      questions: [
+        {prompt:"What is your relationship to your child(ren)?",
+        options: ['Father', 'Mother', 'Grandparent', 'Legal Guardian', 'Other'],
+          required: true
+        }
+      ],
+      data: {survey_part: 'sub_rel'},
+    },
+    {
+      type: jsPsychSurveyMultiChoice,
+      questions: [
+        {prompt: "What is your youngest child's gender?",
+        options: ['Male', 'Female'],
+        required: true}
+      ],
+      data: {survey_part: 'child_gender'},
+    },
+    {
+      type: jsPsychSurvey,
+      survey_json: {
+        showQuestionNumbers: false,
+        completeText: 'Enter.',
+        pages: [
+        {
+          name: 'Child Age',
+          title: "What is your youngest child's age?",
+          elements: [{
+            type: 'text',
+            title: "Please enter a whole number and round to the nearest whole number.",
+            inputType: 'number',
+          isRequired: true,
+            },
+          ],
+        },
+      ]
+      },
+      data: {survey_part: 'child_age'},
+    },
+    {
+      type: jsPsychSurveyText,
+      questions: [
+        {prompt: "Is your child/are your children limited in any way in activities that children their age usually participate in, like games or daycare, because of an ongoing physical or mental health problem or disability? If yes, please explain.",
+          required: true
+        }
+      ],
+      data: {survey_part: 'child_able'},
+    }
+  ],
+  }
+
+var if_yes = {
+    timeline: [child_dem],
+    conditional_function: function(){
+        // get the data from the previous trial,
+        // and check which key was pressed
+        var data = jsPsych.data.get().last(1).values()[0];
+        if(jsPsych.pluginAPI.compareKeys(data.response, 'N','n')){
+            return false;
+        } else if (jsPsych.pluginAPI.compareKeys(data.response, 'Y','y')) {
+            return true;
+        }
+    }
+}
+
+    /*pre-intervention*/
+
+timeline.push(check_question, if_yes);
+
+var sub_race = {
+      type: jsPsychSurveyMultiSelect,
+      questions: [
+      {prompt: "What category describes you? Please select all that apply.",
+      options: ["<strong> White. </strong> A person having origins in any of the original peoples of Europe, the Middle East, or North Africa.",
+      "<strong> Black or African American. </strong> A person having origins in any of the Black racial groups of Africa.",
+      "<strong> American Indian or Alaska Native. </strong> A person having origins in any of the original peoples of North and South America (including Central America), and who maintains tribal affiliation or community attachment.",
+      "<strong> Asian. </strong> A person having origins in any of the original peoples of the Far East, Southeast Asia, or the Indian subcontinent including, for example, Cambodia, China, India, Japan, Korea, Malaysia, Pakistan, the Philippine Islands, Thailand, and Vietnam.</strong> ",
+      "<strong> Native Hawaiian or Other Pacific Islander. </strong> A person having origins in any of the original peoples of Hawaii, Guam, Samoa, or other Pacific Islands.",
+      "<strong> Hispanic or Latino. </strong> A person of Cuban, Mexican, Puerto Rican, Cuban, South or Central American, or other Spanish culture or origin, regardless of race.",
+      "<strong> Other. </strong>",
+      "<strong> I would rather not report this.</strong>"],
+      required: true,
+      vertical: true,
+      name: 'Race'
+      }
+    ],
+    data: {survey_part: 'sub_race'},
+    }
+    timeline.push(sub_race);
+
+    var sub_edu = {
+      type: jsPsychSurveyMultiChoice,
+      questions: [
+        {prompt: "What is your highest level of education?",
+        options: ["Less than a HS diploma",
+      "HS Diploma/GED",
+      "Some college (no degree)",
+      "Associate's Degree",
+      "Bachelor's Degree",
+      "Graduate Degree",
+      "I would rather not report this."],
+      required: true
+        }
+      ],
+      data: {survey_part: 'sub_edu'},
+    }
+    timeline.push(sub_edu);
+
+    var sub_inc = {
+      type: jsPsychSurveyMultiChoice,
+      questions: [
+        {prompt: "What is your household income?",
+        options: ["Under $15,000",
+      "$15,000-$24,999",
+      "$25,000-$34,999",
+      "$35,000-$49,999",
+      "$50,000-$74,999",
+      "$75,000-$99,000",
+      "$100,000-$149,999",
+      "$150,000-$199,999",
+      "$200,000 and higher",
+      "I would rather not report this."],
+      required: true
+        }
+      ],
+      data: {survey_part: 'sub_inc'},
+    }
+    timeline.push(sub_inc);
+
+    var sub_math = {
+      type: jsPsychSurveyMultiSelect,
+      questions: [
+        {prompt: "What math courses have you taken? Please select all that apply.",
+        options: ["Pre-Algebra", "Elementary Algebra or Algebra 1","Geometry", "Intermediate Algebra or Algebra 2", "Trigonometry", "Pre-calculus", "Calculus", "Statistics", "Linear algebra", "Abstract algebra", "Differential equations", "Other", "None of the above"],
+        add_other_option: true /* handle other */,
+        required: true,
+      },
+      ],
+      data: {survey_part: 'sub_math'},
+    }
+    timeline.push(sub_math);
+
+    var sub_employ = {
+      type: jsPsychSurveyMultiSelect,
+      questions: [
+        {prompt: "What is your current employment status? Are you...",
+        options: ["Employed for wages",
+      "Self-employed",
+      "Looking for employment",
+      "A homemaker",
+      "A student",
+      "Retired",
+      "Other",
+      "I would rather not report this."],
+      required: true,
+        }
+      ],
+      data: {survey_part: 'sub_employ'},
+    }
+    timeline.push(sub_employ);
+
+    var sub_mathskills = {
+      type: jsPsychHtmlSliderResponse,
+      stimulus: "What percentage of the time do you use mathematics skills in your job?",
+      labels: ["0%", "100%"],
+      slider_width: 700,
+      min: 0,
+      max: 100,
+      slider_start: 50,
+      require_movement: true,
+      data: {survey_part: 'sub_mathskills'},
+    }
+    timeline.push(sub_mathskills);
+
+    /*math attitudes (math anxiety and general anxiety)*/
+    var mathanxiety1 = {
+      type: jsPsychHtmlSliderResponse,
+      stimulus: "Imagine you are asked to solve a difficult math problem. How anxious would you feel?",
+      labels: ["Not at all", "Extremely anxious"],
+      slider_width: 700,
+      min: 0,
+      max: 100,
+      slider_start: 50,
+      require_movement: true,
+      data: {survey_part: 'anxiety_pre'}
+    }
+    timeline.push(mathanxiety1);
+
+    var genanxiety1 = {
+      type: jsPsychHtmlSliderResponse,
+      stimulus: "In general, how anxious do you usually feel?",
+      labels: ["Not at all", "Extremely anxious"],
+      slider_width: 700,
+      min: 0,
+      max: 100,
+      slider_start: 50,
+      require_movement: true,
+      data: {survey_part: 'anxiety_pre'}
+    }
+    timeline.push(genanxiety1);
+
+    /*math mindsets*/
+
+    var mathmindg4 = {
+      type: jsPsychHtmlSliderResponse,
+        stimulus:  `<p><strong>Please rate the degree to which you agree with the following statement:</strong></p>
+        <p>"Your child's math ability is something about them that can't be changed very much."</p>`,
+        labels: ['0% Agree', '100% Agree'],
+        slider_width: 700,
+        min: 0,
+        max: 100,
+        slider_start: 50,
+        require_movement: true,
+        data: {survey_part: 'mindset_pre'},
+      }
+    timeline.push(mathmindg4);
+
+    var mathmindg5 = {
+      type: jsPsychHtmlSliderResponse,
+        stimulus: `<p><strong>Please rate the degree to which you agree with the following statement:</strong></p>
+        <p>"No matter how good people are at math, it's always possible to change your math ability quite a bit."</p>`,
+        labels: ['0% Agree','100% Agree'],
+        slider_width: 700,
+        min: 0,
+        max: 100,
+        slider_start: 50,
+        require_movement: true,
+        data: {survey_part: 'mindset_pre'},
+      }
+      timeline.push(mathmindg5);
+
+    var mathmindg6 = {
+      type: jsPsychHtmlSliderResponse,
+        stimulus: `<p><strong>Please rate the degree to which you agree with the following statement:</strong></p>
+        <p>"To be honest, children's math ability just can't be changed all that much."</p>`,
+        labels: ['0% Agree', '100% Agree'],
+        slider_width: 700,
+        min: 0,
+        max: 100,
+        slider_start: 50,
+        require_movement: true,
+        data: {survey_part: 'mindset_pre'},
+    }
+      timeline.push(mathmindg6);
+
+    var mathmindf4 = {
+      type: jsPsychHtmlSliderResponse,
+        stimulus: `<p><strong>Please rate the degree to which you agree with the following statement:</strong></p>
+        <p>"The effects of failure in math are positive for your child and should be utilized."</p>`,
+        labels: ['0% Agree', '100% Agree'],
+        slider_width: 700,
+        min: 0,
+        max: 100,
+        slider_start: 50,
+        require_movement: true,
+      data: {survey_part: 'mindset_pre'},
+    }
+    timeline.push(mathmindf4);
+
+    var mathmindf5 = {
+      type: jsPsychHtmlSliderResponse,
+      stimulus: `<p><strong>Please rate the degree to which you agree with the following statement:</strong></p>
+      <p>"Experiencing math failure hinders your later math performance."</p>`,
+        labels: ['0% Agree', '100% Agree'],
+        slider_width: 700,
+        min: 0,
+        max: 100,
+        slider_start: 50,
+        require_movement: true,
+      data: {survey_part: 'mindset_pre'},
+    }
+    timeline.push(mathmindf5);
+
+    var mathmindf6 = {
+      type: jsPsychHtmlSliderResponse,
+      stimulus: `<p><strong>Please rate the degree to which you agree with the following statement:</strong></p>
+      <p>"Experiencing failure in math can lead to children's learning and growth when it comes to math."</p>`,
+        labels: ['0% Agree', '100% Agree'],
+        slider_width: 700,
+        min: 0,
+        max: 100,
+        slider_start: 50,
+        require_movement: true,
+      data: {survey_part: 'mindset_pre'},
+    }
+    timeline.push(mathmindf6);
+
+    //success
+    var processlikert1 = {
+      type: jsPsychHtmlSliderResponse,
+      stimulus: `<p><strong>Imagine you have a 5-year-old child that just <u>successfully solved</u> a math problem, how often would you...</strong></p>
+      <p>Praise your child for their effort in math (for example, 'You must have worked hard!')</p>`,
+      labels: ['Never', 'Always'],
+      slider_width: 700,
+      min: 0,
+      max: 100,
+      slider_start: 50,
+      require_movement: true,
+      data: {survey_part: 'praise_pre'},
+      };
+      timeline.push(processlikert1);
+
+    var personlikert1 = {
+      type: jsPsychHtmlSliderResponse,
+      stimulus:`<p><strong>Imagine you have a 5-year-old child that just <u>successfully solved</u> a math problem, how often would you...</strong></p>
+      <p>Tell your child they are smart when it comes to math (for example, 'You really have the math smarts!')</p>`,
+      labels: ['Never', 'Always'],
+      slider_width: 700,
+      min: 0,
+      max: 100,
+      slider_start: 50,
+      require_movement: true,
+      data: {survey_part: 'praise_pre'},
+    };
+    timeline.push(personlikert1);
+
+    //failure
+    var processlikert2 = {
+      type: jsPsychHtmlSliderResponse,
+      stimulus: `<p><strong>Imagine you have a 5-year-old child that just <u>failed to solve</u> a math problem, how often would you...</strong></p>
+      <p>Point out to your child that they may not have tried as hard as they could have (for example, 'Did you really do all that you could do to prepare?')</p>`,
+      labels: ['Never', 'Always'],
+      slider_width: 700,
+      min: 0,
+      max: 100,
+      slider_start: 50,
+      require_movement: true,
+      data: {survey_part: 'praise_pre'},
+    };
+    timeline.push(processlikert2);
+
+    var personlikert2 = {
+      type: jsPsychHtmlSliderResponse,
+      stimulus: `<p><strong>Imagine you have a 5-year-old child that just <u>failed to solve</u> a math problem, how often would you...</strong></p>
+      <p>Let your child know that they might not be naturally talented in math (for example, 'Math just may not be something that you are naturally good at.')</p>`,
+      labels: ['Never', 'Always'],
+      slider_width: 700,
+      min: 0,
+      max: 100,
+      slider_start: 50,
+      require_movement: true,
+      data: {survey_part: 'praise_pre'},
+    };
+    timeline.push(personlikert2);
+
+    var attention_check = {
+      type: jsPsychSurveyMultiChoice,
+      questions: [
+        {prompt: `<p><strong>You just imagined your 5-year-old child solving math problems.</strong></p>
+          <p>How did your child do?</p>`,
+        options: ['Child always succeeded', 'Child always failed', 'Child sometimes succeeded and sometimes failed'],
+        required: true,
+        }
+      ],
+      data: {survey_part: 'attention_check'}
+    }
+    timeline.push(attention_check);
+
+    /*beliefs*/
+    var empiricism1 = {
+    type: jsPsychSurveyMultiSelect,
+    questions: [
+      {
+        prompt: "Which of the following can do math in any way?",
+        options: ["Adults", "Infants", "Animals"],
+        name: 'Choices',
+        required: true
+      }
+    ],
+    data: {survey_part: 'empiricism_pre'},
+    };
+    timeline.push(empiricism1);
+
+    var empiricism2= {
+      type: jsPsychSurveyMultiChoice,
+      questions: [
+        {prompt:"<strong>True or False:</strong> Part of our brain is dedicated to processing information related to math.",
+        options: ['True','False'],
+        required: true,
+    },
+    ],
+    data: {survey_part: 'empiricism_pre'},
+    }
+    timeline.push(empiricism2);
+
+    var empiricism3= {
+      type: jsPsychSurvey,
+      survey_json: {
+        showQuestionNumbers: false,
+        completeText: 'Continue',
+        pages: [
+        {
+          name: 'Experience Age',
+          title: `If Alex sees two bowls of blueberries, one with 5 blueberries in it and one with 20 blueberries in it, Alex can tell which bowl has more blueberries without counting.
+            At what age can Alex tell which has more for the first time?`,
+          elements: [{
+            type: 'text',
+            title:' Year (please type a whole number between 0-100):' ,
+            inputType: 'number',
+          isRequired: true,
+            },
+            {
+              type: 'text',
+              title: "Month (please type a whole number between 0-12):",
+              inputType: 'number',
+              isRequired: true,
+            }
+          ],
+        },
+      ]
+      },
+      data: {survey_part: 'empiricism_pre'},
+    }
+    timeline.push(empiricism3);
+
+    var empiricism4 = {
+    type: jsPsychHtmlSliderResponse,
+    stimulus: `<p><strong>If Alex sees two bowls of blueberries, one with 5 blueberries in it and one with 20 blueberries in it, Alex can tell which bowl has more blueberries without counting.</strong></p>
+        <p>How come Alex can tell which has more?</p>`,
+    labels: ['100% from genes', '50% genes and 50% experience', '100% from experience'],
+    slider_width: 700,
+    require_movement: true,
+    data: {survey_part: 'empiricism_pre'},
+    }
+    timeline.push(empiricism4);
+
+    var gender_instructions = {
+      type: jsPsychImageButtonResponse,
+      stimulus: 'img/genderinstructions1.png',
+      stimulus_width: 450,
+      stimulus_height: 450,
+      choices: ['Continue']
+    }
+    timeline.push(gender_instructions);
+
+    /*gender*/
+
+    var gendermath1 = {
+      type:jsPsychImageSliderResponse,
+      stimulus: "img/p1.png",
+      labels: ['Person A', 'Person B'],
+      prompt: "<p><strong>Who is better at math?</strong></p>",
+      slider_width: 700,
+      stimulus_width: 700,
+      stimulus_height: 400,
+      require_movement: true,
+      data: {survey_part: 'gender_pre'},
+    }
+    timeline.push(gendermath1);
+
+    var gendernice1 = {
+      type: jsPsychImageSliderResponse,
+      stimulus: "img/p3.png",
+      labels: ['Person A', 'Person B'],
+      prompt: "<p> <strong>Who is nicer?</strong></p>",
+      slider_width: 700,
+      stimulus_width: 700,
+      stimulus_height: 400,
+      require_movement: true,
+      data: {survey_part: 'gender_pre'},
+    }
+    timeline.push(gendernice1);
+
+    var gendermath2 = {
+      type:jsPsychImageSliderResponse,
+      stimulus: "img/p2.png",
+      labels: ['Person A', 'Person B'],
+      prompt: "<p><strong>Who is better at math?</strong></p>",
+      slider_width: 700,
+      stimulus_width: 700,
+      stimulus_height: 400,
+      require_movement: true,
+      data: {survey_part: 'gender_pre'},
+    }
+    timeline.push(gendermath2);
+
+    /* define instructions trial */
+    var instructions1 = {
+      type: jsPsychImageButtonResponse,
+      stimulus:'img/part2.png',
+      prompt: `<p>Thank you for answering those questions.</p>
+      <p>Welcome to <strong>Part 2</strong>!</p>
+      <p>We are interested in figuring out how to best communicate science to the public.</p>
+      <p>We are going to show you one version of communication materials we have developed.</p>
+      <p>We are curious how well you think it works.</p>
+      <p>Click the 'Continue' button to view the material.</p> `,
+      choices: ['Continue'],
+      stimulus_width: 450,
+      stimulus_height: 450
+    }
+    timeline.push(instructions1);
+
+    var instructions2 = {
+      type: jsPsychImageButtonResponse,
+      stimulus: 'img/researchbee.png' ,
+      prompt:
+       `<p>You will now be shown a series of slides.</p>
+        <p>You will be shown one slide at a time and will be able to click the <strong>Next</strong> button</p>
+        <p>after approximately <strong> 5 seconds. </strong></p>
+        <div style='width: 700px;'>
+      `,
+      stimulus_width: 450,
+      stimulus_height: 450,
+      choices: ['Continue']
+    };
+    timeline.push(instructions2);
+
+    /* define trial stimuli array for timeline variables */
+    var test_stimuli = [
+      { stimulus: "img/control1.png"},
+      { stimulus: "img/control2.png"},
+      { stimulus: "img/control3.png"},
+      { stimulus: "img/control4.png"},
+      { stimulus: "img/control5.png"},
+      { stimulus: "img/control6.png"},
+      { stimulus: "img/control7.png"},
+      { stimulus: "img/control8.png"},
+      { stimulus: "img/control9.png"},
+      { stimulus: "img/control10.png"}
+    ];
+
+    /* define test trials */
+    var test = {
+      type: jsPsychImageButtonResponse,
+      stimulus: jsPsych.timelineVariable('stimulus'),
+      choices: ['Next'],
+      enable_button_after: 5000
+    };
+
+    /* define test procedure */
+    var test_procedure = {
+      timeline: [test],
+      timeline_variables: test_stimuli,
+      data: {survey_part: 'intervention'},
+    };
+    timeline.push(test_procedure);
+
+    /*post-intervention instructions*/
+    var post_instructions = {
+      type: jsPsychImageButtonResponse,
+      stimulus: 'img/part3.png',
+      prompt: ` <p>You have arrived at <strong> Part 3 </strong>!</p>
+      <p>First, some questions asking you about the material you just viewed.</p>`,
+      choices: ['Continue'],
+      stimulus_width: 450,
+      stimulus_height: 450,
+      data: {survey_part: 'post_instructions'},
+    };
+    timeline.push(post_instructions);
+
+    var feedback1 = {
+      type: jsPsychHtmlSliderResponse,
+      stimulus: "How surprised are you to find out about the information presented to you in the slides you just saw?",
+      labels: ["Not at all", "Extremely surprised"],
+      slider_width: 700,
+      min: 0,
+      max: 100,
+      slider_start: 50,
+      require_movement: true,
+      data: {survey_part: 'feedback'}
+    }
+    timeline.push(feedback1);
+
+    var feedback2 = {
+      type: jsPsychHtmlSliderResponse,
+      stimulus: "How convinced are you to find out about the information presented to you in the slides you just saw?",
+      labels: ["Not at all", "Extremely convinced"],
+      slider_width: 700,
+      min: 0,
+      max: 100,
+      slider_start: 50,
+      require_movement: true,
+      data: {survey_part: 'feedback'}
+    }
+    timeline.push(feedback2);
+
+    var feedback3 = {
+      type: jsPsychSurveyText,
+      questions: [
+        {prompt: "Is there any other feedback you'd like to share?",
+        required: true,
+        }
+      ],
+      data: {survey_part: 'feedback'},
+    }
+    timeline.push(feedback3);
+
+    var post_instructions2 = {
+      type: jsPsychImageButtonResponse,
+      stimulus: 'img/postbee.png',
+      choices: ['Continue'],
+      stimulus_width: 450,
+      stimulus_height: 450,
+    }
+    timeline.push(post_instructions2);
+
+    /*math attitudes (math anxiety and general anxiety) post intervention */
+    var mathanxiety2 = {
+      type: jsPsychHtmlSliderResponse,
+      stimulus: "Imagine you are asked to solve a difficult math problem. How anxious would you feel?",
+      labels: ["Not at all", "Extremely anxious"],
+      slider_width: 700,
+      min: 0,
+      max: 100,
+      slider_start: 50,
+      require_movement: true,
+      data: {survey_part: 'anxiety_post'}
+    }
+    timeline.push(mathanxiety2);
+
+    var genanxiety2 = {
+      type: jsPsychHtmlSliderResponse,
+      stimulus: "In general, how anxious do you usually feel?",
+      labels: ["Not at all", "Extremely anxious"],
+      slider_width: 700,
+      min: 0,
+      max: 100,
+      slider_start: 50,
+      require_movement: true,
+      data: {survey_part: 'anxiety_post'}
+    }
+    timeline.push(genanxiety2);
+
+
+    /*insert math mindsets*/
+
+    var mathmindg1 = {
+      type: jsPsychHtmlSliderResponse,
+      stimulus:  `<p><strong>Please rate the degree to which you agree with the following statement:</strong></p>
+      <p> "You have a certain amount of math ability, and there is really not much that can be done to change it."</p>`,
+      labels: ['0% Agree', '100% Agree'],
+      slider_width: 700,
+      min: 0,
+      max: 100,
+      slider_start: 50,
+      require_movement: true,
+      data: {survey_part: 'mindset_post'}
+      }
+      timeline.push(mathmindg1);
+
+    var mathmindg2 = {
+      type: jsPsychHtmlSliderResponse,
+      stimulus: `<p><strong>Please rate the degree to which you agree with the following statement:</strong></p>
+      <p>"Your child's math ability is something that can be changed a lot."</p>`,
+      labels: ['0% Agree', '100% Agree'],
+      slider_width: 700,
+      min: 0,
+      max: 100,
+      slider_start: 50,
+      require_movement: true,
+      data: {survey_part: 'mindset_post'}
+      };
+      timeline.push(mathmindg2);
+
+    var mathmindg3 = {
+      type: jsPsychHtmlSliderResponse,
+      stimulus:  `<p><strong>Please rate the degree to which you agree with the following statement:</strong></p>
+      <p>"Children can learn new things, but there is little that can be done to change their basic math ability."</p>`,
+      labels: ['0% Agree', '100% Agree'],
+      slider_widht: 700,
+      min: 0,
+      max: 100,
+      slider_start: 50,
+      require_movement: true,
+      data: {survey_part: 'mindset_post'},
+    };
+      timeline.push(mathmindg3);
+
+    var mathmindf1 = {
+      type: jsPsychHtmlSliderResponse,
+      stimulus: `<p><strong>Please rate the degree to which you agree with the following statement:</strong></p>
+      <p>"Experiencing failure in math gets in the way of your learning and growth in math."</p>`,
+      labels: ['0% Agree', '100% Agree'],
+      slider_width: 700,
+      min: 0,
+      max: 100,
+      slider_start: 50,
+      require_movement: true,
+      data: {survey_part: 'mindset_post'},
+    }
+    timeline.push(mathmindf1);
+
+    var mathmindf2 = {
+      type: jsPsychHtmlSliderResponse,
+      stimulus:  `<p><strong>Please rate the degree to which you agree with the following statement:</strong></p>
+      <p>"Experiencing math failure enhances children's later math performance and productivity."</p>`,
+      labels: ['0% Agree', '100% Agree'],
+      slider_width: 700,
+      min: 0,
+      max: 100,
+      slider_start: 50,
+      require_movement: true,
+      data: {survey_part: 'mindset_post'},
+    }
+    timeline.push(mathmindf2);
+
+    var mathmindf3 = {
+      type: jsPsychHtmlSliderResponse,
+      stimulus:  `<p><strong>Please rate the degree to which you agree with the following statement:</strong></p>
+      <p>"The effects of failure in math are negative for your child and should be avoided."</p>`,
+      labels: ['0% Agree', '100% Agree'],
+      slider_width: 700,
+      min: 0,
+      max: 100,
+      slider_start: 50,
+      require_movement: true,
+      data: {survey_part: 'mindset_post'},
+    }
+    timeline.push(mathmindf3);
+
+
+    /*math children success/fail open-ended*/
+    var childsuccess = {
+      type: jsPsychSurveyText,
+      questions: [
+        {prompt: "<strong>Imagine you have a 5-year-old child who was trying to solve a math problem, and they <u>succeeded</u>. You will tell them...</strong>",
+          required: true
+        },
+      ],
+      data: {survey_part: 'praise_post'},
+    };
+    timeline.push(childsuccess);
+
+    var childfailure = {
+      type: jsPsychSurveyText,
+      questions: [
+        {prompt: "<strong>Imagine you have a 5-year-old child who was trying to solve a math problem, but they <u>failed</u>. You will tell them...</strong>",
+          required: true
+        },
+      ],
+      data: {survey_part: 'praise_post'},
+      required: true,
+    };
+    timeline.push(childfailure);
+
+    var empiricism1_2 = {
+    type: jsPsychSurveyMultiSelect,
+    questions: [
+      {
+        prompt: "Which of the following can do math in any way?",
+        options: ["Adults", "Infants", "Animals"],
+        required: true,
+        name: 'Choices'
+      }
+    ],
+    data: {survey_part: 'empiricism_post'},
+    };
+    timeline.push(empiricism1_2);
+
+    var empiricism2_2= {
+      type: jsPsychSurveyMultiChoice,
+      questions: [
+        {prompt:"<strong>True or False:</strong> Part of our brain is dedicated to processing information related to math.",
+        options: ['True','False'],
+        required: true,
+        }
+      ],
+      data: {survey_part: 'empiricism_post'},
+    }
+    timeline.push(empiricism2_2);
+
+    var empiricism3_2= {
+      type: jsPsychSurvey,
+      survey_json: {
+        showQuestionNumbers: false,
+        completeText: 'Continue.',
+        pages: [
+        {
+          name: 'Experience Age',
+          title: `If Taylor sees two bowls of strawberries, one with 5 strawberries in it and one with 20 strawberries in it, Taylor can tell which bowl has more strawberries without counting.
+            At what age can Taylor tell which has more for the first time?`,
+          elements: [{
+            type: 'text',
+            title:' Year (please type a whole number between 0-100):' ,
+            inputType: 'number',
+          isRequired: true,
+            },
+            {
+              type: 'text',
+              title: "Month (please type a whole number between 0-12):",
+              inputType: 'number',
+              isRequired: true,
+            }
+          ],
+        },
+      ]
+      },
+      data: {survey_part: 'empiricism_post'},
+    }
+    timeline.push(empiricism3_2);
+
+    var empiricism4_2 = {
+    type: jsPsychHtmlSliderResponse,
+    stimulus: `<p><strong>If Taylor sees two bowls of strawberries, one with 5 strawberries in it and one with 20 strawberries in it, Taylor can tell which bowl has more strawberries without counting.</strong></p>
+        <p>How come Taylor can tell which has more?</p>`,
+    labels: ['100% from genes', '50% genes and 50% experience', '100% from experience'],
+    slider_width: 700,
+    require_movement: true,
+    data: {survey_part: 'empiricism_post'},
+    }
+    timeline.push(empiricism4_2);
+
+//gender instructions again
+    var gender_instructions2 = {
+      type: jsPsychImageButtonResponse,
+      stimulus: 'img/genderinstructions2.png',
+      choices: ['Continue'],
+      stimulus_width: 450,
+      stimulus_height: 450,
+    }
+    timeline.push(gender_instructions2);
+
+    /*gender questions post*/
+    var gendermath3 = {
+      type: jsPsychImageSliderResponse,
+      stimulus: "img/p5.png",
+      labels: ['Person A', 'Person B'],
+      prompt: "<p><strong>Who is better at math?</strong></p>",
+      slider_width: 700,
+      stimulus_width: 700,
+      stimulus_height: 400,
+      require_movement: true,
+      data: {survey_part: 'gender_post'},
+    }
+    timeline.push(gendermath3);
+
+    var gendernice2 = {
+      type:jsPsychImageSliderResponse,
+      stimulus: "img/p4.png",
+      labels: ['Person A', 'Person B'],
+      prompt: "<p><strong>Who is nicer?</strong></p>",
+      slider_width: 700,
+      stimulus_width: 700,
+      stimulus_height: 400,
+      require_movement: true,
+      data: {survey_part: 'gender_post'},
+    }
+    timeline.push(gendernice2);
+
+    //save data
+      function saveData(name, data){
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'write_data_file.php');
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.send(JSON.stringify({filename: name, filedata: data}));
+    }
+
+    function download_csv(name, data) {
+      var csv = data;
+      console.log(csv);
+      var hiddenElement = document.createElement('a');
+      hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+      //hiddenElement.target = '_blank';
+      hiddenElement.download = name;
+      hiddenElement.click();
+    }
+
+    var gendermath4 = {
+      type:jsPsychImageSliderResponse,
+      stimulus: "img/p6.png",
+      labels: ['Person A', 'Person B'],
+      prompt: "<p><strong>Who is better at math?<strong></p>",
+        slider_width: 700,
+        stimulus_width: 700,
+        stimulus_height: 400,
+      require_movement: true,
+      data: {survey_part: 'gender_post'},
+      on_finish: function() {
+      saveData(savefilename, jsPsych.data.get().csv());
+      //download_csv(savefilename, jsPsych.data.get().csv());
+      jsPsych.data.get().localSave('csv',savefilename+'.csv');
+    },
+    }
+    timeline.push(gendermath4);
+
+
+
+    /* define end of experiment */
+    var end = {
+      type: jsPsychImageKeyboardResponse,
+      stimulus: 'img/thankyou.png',
+      prompt: `<p><a href="https://app.prolific.co/submissions/complete?cc=XXXXXXX">Click here to return to Prolific and complete the study</a>.</p>
+        <div style='width: 700px;'>`,
+      stimulus_width: 450,
+      stimulus_height: 450,
+  };
+    timeline.push(end);
+
+    /* start the experiment */
+    jsPsych.run(timeline);
+
+  </script>
+</html>
