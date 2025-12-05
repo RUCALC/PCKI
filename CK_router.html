@@ -1,0 +1,29 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>CK Study Router</title>
+  <script>
+    window.onload = function() {
+      // Different Versions
+      var versions = [
+        "CK_Pilot_MB",
+        "CK_Pilot_Hardwired",
+        "CK_Pilot_MG",
+        "CK_Pilot_MiE"
+      ];
+      // Randomly pick one version
+      var chosen = versions[Math.floor(Math.random() * versions.length)];
+      // Get SONA ID from URL
+      var params = new URLSearchParams(window.location.search);
+      var sona_id = params.get("id");
+      // Redirect to the chosen study, preserving SONA ID
+      window.location.href = chosen + "?id=" + sona_id;
+    };
+  </script>
+</head>
+<body>
+  <p>Loading study…</p>
+</body>
+</html>
